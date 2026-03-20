@@ -1,0 +1,78 @@
+{
+	"@odata.context" : "https://45.77.77.206/fmi/odata/v4/EISKids/$metadata#Client(\"firstName\",\"lastName\",\"__ID\",\"rid\")",
+	"value" : 
+	[
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('1EAC3BD4-DB46-450D-A658-31DCFDF24D73')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('1EAC3BD4-DB46-450D-A658-31DCFDF24D73')",
+			"__ID" : "1EAC3BD4-DB46-450D-A658-31DCFDF24D73",
+			"firstName" : "Gwendolyns",
+			"lastName" : "Sheppard",
+			"rid" : 6
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('9E563D3D-77CF-4046-9705-51D6AA3FDE89')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('9E563D3D-77CF-4046-9705-51D6AA3FDE89')",
+			"__ID" : "9E563D3D-77CF-4046-9705-51D6AA3FDE89",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Reeves",
+			"rid" : 774
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('2CD1BB8C-7166-4750-8A58-D786281AFC8E')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('2CD1BB8C-7166-4750-8A58-D786281AFC8E')",
+			"__ID" : "2CD1BB8C-7166-4750-8A58-D786281AFC8E",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Sanchez",
+			"rid" : 1083
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('75C69474-0D0D-47EC-A94D-8C542D342F78')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('75C69474-0D0D-47EC-A94D-8C542D342F78')",
+			"__ID" : "75C69474-0D0D-47EC-A94D-8C542D342F78",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Soto",
+			"rid" : 3401
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('6C27D61F-FAFA-4A49-94A2-35B1385E3C36')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('6C27D61F-FAFA-4A49-94A2-35B1385E3C36')",
+			"__ID" : "6C27D61F-FAFA-4A49-94A2-35B1385E3C36",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Osborn",
+			"rid" : 3593
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('67BCC2CB-EDF4-411C-81D0-3A17E4985275')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('67BCC2CB-EDF4-411C-81D0-3A17E4985275')",
+			"__ID" : "67BCC2CB-EDF4-411C-81D0-3A17E4985275",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Richards",
+			"rid" : 3733
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('6E9F88D4-57A5-4A3F-B38C-D75A79BAA1BA')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('6E9F88D4-57A5-4A3F-B38C-D75A79BAA1BA')",
+			"__ID" : "6E9F88D4-57A5-4A3F-B38C-D75A79BAA1BA",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Dickson",
+			"rid" : 5379
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('E79EB49B-2435-4562-8AD5-40BEC3D592EF')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('E79EB49B-2435-4562-8AD5-40BEC3D592EF')",
+			"__ID" : "E79EB49B-2435-4562-8AD5-40BEC3D592EF",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Sutton",
+			"rid" : 6004
+		},
+		{
+			"@odata.editLink" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('1B8103A9-1B4F-4750-9B49-A005E1C73770')",
+			"@odata.id" : "https://45.77.77.206/fmi/odata/v4/EISKids/Client('1B8103A9-1B4F-4750-9B49-A005E1C73770')",
+			"__ID" : "1B8103A9-1B4F-4750-9B49-A005E1C73770",
+			"firstName" : "Gwendolyn",
+			"lastName" : "Strong",
+			"rid" : 6640
+		}
+	]
+}

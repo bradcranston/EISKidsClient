@@ -2,16 +2,149 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       @import "./src/style.css";
     </style>
-    <title>JSDev</title>
+    <title>EIS Kids Client</title>
   </head>
   <body>
-    <h1>Alright. You're set.</h1>
-      <h2 class="tintedBlackLeft">Now build something amazing!</h2>
-      <p>JS in FM is amazing</p>
-    <button type="button">Click Me!</button>
+    <div id="app">
+      <div class="container">
+        <!-- Header -->
+        <header class="header-section">
+          <div class="header-content">
+            <h1>Client Management</h1>
+            <p class="header-subtitle">Manage clients and session notes</p>
+          </div>
+          <div class="header-buttons">
+            <button id="clearBtn" class="btn-search btn-new-client">
+              <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              New Client
+            </button>
+            <button id="openSearchBtn" class="btn-search">
+              <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 10L14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Search Clients
+            </button>
+          </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+          <!-- Child Details Card -->
+          <div class="card details-card">
+            <div class="card-header">
+              <h2>Client Information</h2>
+              <div class="card-badge" id="statusBadge">New Client</div>
+            </div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input type="text" id="firstName" placeholder="Enter first name" />
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input type="text" id="lastName" placeholder="Enter last name" />
+                </div>
+              </div>
+              <div class="button-group">
+                <button id="saveBtn" class="btn btn-primary">
+                  <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M13 3L6 10L3 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Session Notes Card -->
+          <div class="card notes-card">
+            <div class="card-header">
+              <h2>Session Notes</h2>
+              <button id="addNoteBtn" class="btn btn-add" disabled>
+                <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Add Note
+              </button>
+            </div>
+            <div class="card-body">
+              <div id="sessionNotesList" class="notes-list">
+                <div class="empty-state">
+                  <svg class="empty-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="10" y="8" width="28" height="32" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <line x1="16" y1="16" x2="32" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="16" y1="22" x2="28" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="16" y1="28" x2="32" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <p>Select a client to view session notes</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="modal">
+      <div class="modal-content search-modal-content">
+        <div class="modal-header">
+          <h3>Search Clients</h3>
+          <button class="modal-close search-modal-close">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="search-form">
+            <div class="search-input-group">
+              <div class="form-group">
+                <label for="searchFirstName">First Name</label>
+                <input type="text" id="searchFirstName" placeholder="Enter first name..." />
+              </div>
+              <div class="form-group">
+                <label for="searchLastName">Last Name</label>
+                <input type="text" id="searchLastName" placeholder="Enter last name..." />
+              </div>
+            </div>
+            <button id="searchBtn" class="btn btn-primary btn-search-submit">
+              <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 10L14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Search
+            </button>
+          </div>
+          <div id="searchResults" class="search-results"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content message-modal-content">
+        <div class="modal-body">
+          <div class="message-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+              <path d="M24 16V26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="24" cy="32" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <p id="modalMessage"></p>
+          <button id="modalOkBtn" class="btn btn-primary">OK</button>
+        </div>
+      </div>
+    </div>
 
     <script type="module">
       import "./src/index.js";
