@@ -1,7 +1,28 @@
 // Global state
 let currentChild = null;
+let currentAccount = null;
 let children = [];
 let sessionNotes = [];
+
+// Page switching
+function switchPage(page) {
+  const clientsPage = document.getElementById('clientsPage');
+  const accountsPage = document.getElementById('accountsPage');
+  const tabs = document.querySelectorAll('.page-nav-tab');
+
+  tabs.forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.page === page);
+  });
+
+  if (page === 'clients') {
+    clientsPage.style.display = '';
+    accountsPage.style.display = 'none';
+  } else if (page === 'accounts') {
+    clientsPage.style.display = 'none';
+    accountsPage.style.display = '';
+    loadAccounts();
+  }
+}
 
 // Modal functions
 function showModal(message) {
@@ -73,9 +94,15 @@ function initInterface() {
   lastName.addEventListener('input', checkForChanges);
 
   console.log('EIS Kids Client initialized');
-  
+
+  // Wire up page nav tabs
+  document.querySelectorAll('.page-nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchPage(tab.dataset.page));
+  });
+
   // Initialize in "New Client" state
   initializeNewClientState();
+  initAccountsPage();
 }
 
 // Initialize interface to New Client state
@@ -580,6 +607,219 @@ function updateClientId(clientId) {
   
   console.log('Interface updated with client ID:', currentChild);
 }
+
+// ===== User Accounts Page =====
+
+// Initialize accounts page event listeners
+function initAccountsPage() {
+  const saveAccountBtn = document.getElementById('saveAccountBtn');
+  const newAccountBtn = document.getElementById('newAccountBtn');
+  const accountUsername = document.getElementById('accountUsername');
+  const accountFirstName = document.getElementById('accountFirstName');
+  const accountLastName = document.getElementById('accountLastName');
+  const accountRole = document.getElementById('accountRole');
+  const accountStatus = document.getElementById('accountStatus');
+
+  newAccountBtn.addEventListener('click', handleNewAccount);
+  saveAccountBtn.addEventListener('click', handleAccountSave);
+
+  accountUsername.addEventListener('input', checkAccountForChanges);
+  accountFirstName.addEventListener('input', checkAccountForChanges);
+  accountLastName.addEventListener('input', checkAccountForChanges);
+  accountRole.addEventListener('change', checkAccountForChanges);
+  accountStatus.addEventListener('change', checkAccountForChanges);
+}
+
+// Load all accounts from FileMaker
+function loadAccounts() {
+  if (window.FileMaker) {
+    window.FileMaker.PerformScript('Manage: UserAccount', JSON.stringify({ mode: 'getAll' }));
+  } else {
+    console.log('FileMaker not available - loading sample accounts');
+    renderAccounts([
+      { id: '1', username: 'jsmith', firstName: 'Jane', lastName: 'Smith', role: 'Admin', status: 'Active' },
+      { id: '2', username: 'tdoe', firstName: 'Tom', lastName: 'Doe', role: 'Therapist', status: 'Active' },
+      { id: '3', username: 'mwilson', firstName: 'Mary', lastName: 'Wilson', role: 'ServiceCoordinator', status: 'Inactive' }
+    ]);
+  }
+}
+
+// Render the accounts list - called from FileMaker or locally
+function renderAccounts(data) {
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+    } catch (e) {
+      console.error('Failed to parse accounts data:', e);
+      return;
+    }
+  }
+
+  let accounts = data;
+  if (data && data.value && Array.isArray(data.value)) {
+    accounts = data.value;
+  }
+  if (!Array.isArray(accounts)) {
+    accounts = [];
+  }
+
+  const accountsList = document.getElementById('accountsList');
+
+  if (accounts.length === 0) {
+    accountsList.innerHTML = `
+      <div class="empty-state">
+        <svg class="empty-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="16" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 40C8 32 14 28 24 28C34 28 40 32 40 40" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p>No user accounts found</p>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  accounts.forEach((account, index) => {
+    const accountId = account.id || account.__ID;
+    const initials = ((account.firstName || '')[0] || '') + ((account.lastName || '')[0] || '');
+    const statusClass = account.status === 'Active' ? 'status-badge-active' : 'status-badge-inactive';
+    const roleLabel = account.role === 'ServiceCoordinator' ? 'Service Coordinator' : (account.role || '');
+    html += `
+      <div class="account-item" data-account-index="${index}">
+        <div class="account-item-avatar">${initials.toUpperCase()}</div>
+        <div class="account-item-info">
+          <div class="account-item-name">${account.firstName || ''} ${account.lastName || ''}</div>
+          <div class="account-item-username">@${account.username || ''}</div>
+        </div>
+        <div class="account-item-badges">
+          ${roleLabel ? `<span class="role-badge">${roleLabel}</span>` : ''}
+          <span class="${statusClass}">${account.status || ''}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  accountsList.innerHTML = html;
+
+  // Attach click listeners after rendering
+  const renderedItems = accountsList.querySelectorAll('.account-item[data-account-index]');
+  renderedItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const idx = Number(item.dataset.accountIndex);
+      if (!Number.isNaN(idx)) loadAccountDetails(accounts[idx]);
+    });
+  });
+}
+
+// Load a specific account into the form
+function loadAccountDetails(account) {
+  if (!account) return;
+
+  currentAccount = { id: account.id || account.__ID, ...account };
+
+  document.getElementById('accountUsername').value = account.username || '';
+  document.getElementById('accountFirstName').value = account.firstName || '';
+  document.getElementById('accountLastName').value = account.lastName || '';
+  document.getElementById('accountRole').value = account.role || '';
+  document.getElementById('accountStatus').value = account.status || 'Active';
+
+  const badge = document.getElementById('accountStatusBadge');
+  if (badge) {
+    badge.textContent = 'Editing';
+    badge.style.background = '#dbeafe';
+    badge.style.color = '#1e40af';
+  }
+
+  checkAccountForChanges();
+}
+
+// Check for unsaved changes in the account form
+function checkAccountForChanges() {
+  const username = document.getElementById('accountUsername').value.trim();
+  const firstName = document.getElementById('accountFirstName').value.trim();
+  const lastName = document.getElementById('accountLastName').value.trim();
+  const role = document.getElementById('accountRole').value;
+  const status = document.getElementById('accountStatus').value;
+  const saveAccountBtn = document.getElementById('saveAccountBtn');
+
+  const hasData = username || firstName || lastName || role;
+  const hasChanges = currentAccount
+    ? (username !== (currentAccount.username || '') ||
+       firstName !== (currentAccount.firstName || '') ||
+       lastName !== (currentAccount.lastName || '') ||
+       role !== (currentAccount.role || '') ||
+       status !== (currentAccount.status || 'Active'))
+    : hasData;
+
+  if (hasChanges) {
+    saveAccountBtn.style.display = '';
+    saveAccountBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    saveAccountBtn.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+    const textNode = saveAccountBtn.childNodes[2];
+    if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+      textNode.textContent = currentAccount ? ' Save Account' : ' Save New Account';
+    }
+  } else {
+    saveAccountBtn.style.display = 'none';
+  }
+}
+
+// Reset the account form to New Account state
+function handleNewAccount() {
+  currentAccount = null;
+  document.getElementById('accountUsername').value = '';
+  document.getElementById('accountFirstName').value = '';
+  document.getElementById('accountLastName').value = '';
+  document.getElementById('accountRole').value = '';
+  document.getElementById('accountStatus').value = 'Active';
+  document.getElementById('saveAccountBtn').style.display = 'none';
+
+  const badge = document.getElementById('accountStatusBadge');
+  if (badge) {
+    badge.textContent = 'New Account';
+    badge.style.background = '#e0f2fe';
+    badge.style.color = '#0369a1';
+  }
+}
+
+// Save account to FileMaker
+function handleAccountSave() {
+  const username = document.getElementById('accountUsername').value.trim();
+  const firstName = document.getElementById('accountFirstName').value.trim();
+  const lastName = document.getElementById('accountLastName').value.trim();
+  const role = document.getElementById('accountRole').value;
+  const status = document.getElementById('accountStatus').value;
+
+  if (!username || !firstName || !lastName) {
+    showModal('Please enter a username, first name, and last name');
+    return;
+  }
+
+  const payload = {
+    mode: 'save',
+    id: currentAccount?.id || null,
+    username,
+    firstName,
+    lastName,
+    role,
+    status
+  };
+
+  if (window.FileMaker) {
+    window.FileMaker.PerformScript('Manage: UserAccount', JSON.stringify(payload));
+    if (currentAccount) {
+      Object.assign(currentAccount, { username, firstName, lastName, role, status });
+    }
+    checkAccountForChanges();
+  } else {
+    console.log('FileMaker not available - saving account:', payload);
+    showModal('Account saved successfully');
+  }
+}
+
+// Expose accounts functions to FileMaker
+window.renderAccounts = renderAccounts;
+window.loadAccountDetails = loadAccountDetails;
 
 // Expose functions to window for FileMaker to call
 window.renderInterface = renderInterface;

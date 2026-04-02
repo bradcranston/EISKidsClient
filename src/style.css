@@ -638,6 +638,181 @@ input[type="text"]::placeholder {
   min-width: 120px;
 }
 
+/* ===== Page Navigation Tabs ===== */
+.page-nav {
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.page-nav-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  color: #64748b;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.page-nav-tab:hover {
+  color: #0077aa;
+  background: rgba(0, 119, 170, 0.07);
+}
+
+.page-nav-tab.active {
+  background: linear-gradient(135deg, #0077aa 0%, #0095d9 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 119, 170, 0.3);
+}
+
+.page-nav-tab.active:hover {
+  background: linear-gradient(135deg, #006090 0%, #0085c5 100%);
+  color: #fff;
+}
+
+/* ===== Page Content ===== */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ===== Form Select ===== */
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1a1a1a;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 42px;
+}
+
+.form-select:hover {
+  border-color: #cbd5e1;
+  background-color: #fff;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #0077aa;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(0, 119, 170, 0.1);
+}
+
+.account-status-group {
+  margin-bottom: 24px;
+}
+
+/* ===== Account List Items ===== */
+.account-item {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #0077aa;
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.account-item:hover {
+  border-left-color: #0095d9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateX(4px);
+}
+
+.account-item-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0077aa 0%, #0095d9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.account-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-item-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-item-username {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.account-item-badges {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.role-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-badge-active {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge-inactive {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
 /* ===== Responsive Design ===== */
 @media (max-width: 1024px) {
   .main-content {
