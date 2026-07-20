@@ -21,6 +21,10 @@ let lastRenderedChildRawData = null; // raw data from most recent renderInterfac
 let suppressHistoryOnce = false;  // prevents switchPage from recording history on restore
 // When true, the next renderInterface call will not populate address fields.
 let suppressRenderAfterNewClient = false;
+// When true, we recently requested a New Client and should ignore
+// FileMaker's immediate "new client" response that may contain
+// stale address values.
+let isCreatingNewClient = false;
 
 function splitNameParts(fullName) {
   const trimmed = (fullName || '').trim();
@@ -686,6 +690,7 @@ function handleClear() {
   if (window.FileMaker) {
     // Prevent FileMaker's response from overwriting the cleared address fields.
     suppressRenderAfterNewClient = true;
+    isCreatingNewClient = true;
     window.FileMaker.PerformScript('Manage: Client', JSON.stringify({
       mode: 'newClient'
     }));
@@ -981,7 +986,9 @@ function renderInterface(data, users) {
   currentFamilyMembers = parsedFamilyMembers;
 
   // Update current child - support both __ID and id
-  currentChild = {
+  const incomingId = data.id || data.__ID;
+  if (!isCreatingNewClient || incomingId) {
+    currentChild = {
     id: data.id || data.__ID,
     firstName: data.firstName,
     lastName: data.lastName,
@@ -1002,7 +1009,12 @@ function renderInterface(data, users) {
     reminders: [...currentReminders],
     goals: [...currentGoals],
     interventionistNotes: data.interventionistNotes || ''
-  };
+    };
+  } else {
+    // We're suppressing population for a new-client template; leave
+    // `currentChild` null so the UI remains in a cleared New Client state.
+    console.log('Suppressing population for new-client response (keeping form cleared)');
+  }
 
   console.log('Setting firstName to:', data.firstName);
   console.log('Setting lastName to:', data.lastName);
