@@ -986,7 +986,6 @@ function renderInterface(data, users) {
   currentFamilyMembers = parsedFamilyMembers;
 
   // Update current child - support both __ID and id
-  const incomingId = data.id || data.__ID;
   if (!isCreatingNewClient || incomingId) {
     currentChild = {
     id: data.id || data.__ID,
@@ -1014,6 +1013,7 @@ function renderInterface(data, users) {
     // We're suppressing population for a new-client template; leave
     // `currentChild` null so the UI remains in a cleared New Client state.
     console.log('Suppressing population for new-client response (keeping form cleared)');
+    isCreatingNewClient = false;
   }
 
   console.log('Setting firstName to:', data.firstName);
