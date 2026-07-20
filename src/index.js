@@ -19,6 +19,8 @@ let previousAccount = null;       // last account viewed before current one
 let previousChildData = null;     // raw data of last client viewed before current one
 let lastRenderedChildRawData = null; // raw data from most recent renderInterface call
 let suppressHistoryOnce = false;  // prevents switchPage from recording history on restore
+// When true, the next renderInterface call will not populate address fields.
+let suppressRenderAfterNewClient = false;
 
 function splitNameParts(fullName) {
   const trimmed = (fullName || '').trim();
@@ -682,6 +684,8 @@ function handleClear() {
 
   // Call FileMaker script for new client
   if (window.FileMaker) {
+    // Prevent FileMaker's response from overwriting the cleared address fields.
+    suppressRenderAfterNewClient = true;
     window.FileMaker.PerformScript('Manage: Client', JSON.stringify({
       mode: 'newClient'
     }));
@@ -1021,11 +1025,16 @@ function renderInterface(data, users) {
     document.getElementById('interventionistNotes').value = data.interventionistNotes || '';
     document.getElementById('ifspStartDate').value = data.ifspStartDate || '';
     document.getElementById('language').value = data.language || '';
-    document.getElementById('addrStreet').value = data.addrStreet || '';
-    document.getElementById('addrStreet2').value = data.addrStreet2 || '';
-    document.getElementById('addrCity').value = data.addrCity || '';
-    document.getElementById('addrState').value = data.addrState || '';
-    document.getElementById('addrZip').value = data.addrZip || '';
+    if (!suppressRenderAfterNewClient) {
+      document.getElementById('addrStreet').value = data.addrStreet || '';
+      document.getElementById('addrStreet2').value = data.addrStreet2 || '';
+      document.getElementById('addrCity').value = data.addrCity || '';
+      document.getElementById('addrState').value = data.addrState || '';
+      document.getElementById('addrZip').value = data.addrZip || '';
+    } else {
+      // Clear the flag and leave the already-cleared inputs alone.
+      suppressRenderAfterNewClient = false;
+    }
     displayFamilyMembers();
     console.log('Form fields populated successfully');
   } else {
