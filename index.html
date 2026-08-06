@@ -10,19 +10,46 @@
   </head>
   <body>
     <div id="app">
+      <!-- Loading screen: shown until first data arrives from FileMaker -->
+      <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading…</p>
+        </div>
+      </div>
       <div class="container">
         <!-- Header -->
+        <div class="header-wrapper">
         <header class="header-section">
           <div class="header-content">
             <h1>Client Management</h1>
             <p class="header-subtitle">Manage clients and session notes</p>
           </div>
           <div class="header-buttons">
+            <button id="backBtn" class="btn-search btn-back" style="display:none">
+              <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Back
+            </button>
             <button id="clearBtn" class="btn-search btn-new-client">
               <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
               New Client
+            </button>
+            <button id="syncBtn" class="btn-search btn-sync" style="display:none">
+              <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 4.5A5.5 5.5 0 0 0 3.5 4M3.5 4V1.5M3.5 4H6M3 11.5A5.5 5.5 0 0 0 12.5 12M12.5 12V14.5M12.5 12H10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Sync
+            </button>
+            <button id="exportBtn" class="btn-search btn-export">
+              <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2V10M8 10L5 7M8 10L11 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 12H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Export
             </button>
             <button id="openSearchBtn" class="btn-search">
               <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -31,19 +58,25 @@
               </svg>
               Search Clients
             </button>
+            <button id="hamburgerBtn" class="btn-search hamburger-btn" aria-label="Navigation menu" aria-expanded="false">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
           </div>
         </header>
-
-        <!-- Page Navigation -->
-        <nav class="page-nav">
-          <button class="page-nav-tab active" data-page="clients">
+        <!-- Hamburger dropdown -->
+        <nav id="hamburgerMenu" class="hamburger-menu" aria-hidden="true">
+          <button class="hamburger-menu-item" data-page="dashboard">
             <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
-              <path d="M2 14C2 11 4 9 8 9C12 9 14 11 14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
             </svg>
-            Client Management
+            Client Dashboard
           </button>
-          <button class="page-nav-tab" data-page="accounts">
+          <button class="hamburger-menu-item active" data-page="accounts">
             <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
               <circle cx="5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
               <circle cx="11" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
@@ -54,16 +87,51 @@
             User Accounts
           </button>
         </nav>
+        </div><!-- end header-wrapper -->
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage" class="page-content" style="display:none">
+          <div class="card dashboard-notes-card">
+            <div class="card-header">
+              <h2>
+                <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:6px">
+                  <path d="M3 2h7l3 3v9a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M10 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M5 8H11M5 11H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Recent Notes
+              </h2>
+            </div>
+            <div class="card-body">
+              <div id="dashboardNotesList" class="notes-list">
+                <div class="empty-state">
+                  <svg class="empty-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="10" y="8" width="28" height="32" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <line x1="16" y1="16" x2="32" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="16" y1="22" x2="28" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="16" y1="28" x2="32" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <p>Loading recent notes…</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- end dashboardPage -->
 
         <!-- Client Management Page -->
         <div id="clientsPage" class="page-content">
         <!-- Main Content Area -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent" style="display:none">
           <!-- Child Details Card -->
           <div class="card details-card">
             <div class="card-header">
               <h2>Client Information</h2>
-              <div class="card-badge" id="statusBadge">New Client</div>
+              <button id="deleteClientBtn" class="btn-delete" style="display:none">
+                <svg class="icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 4h10M6 4V2h4v2M5 4v9a1 1 0 001 1h4a1 1 0 001-1V4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Delete Client
+              </button>
             </div>
             <div class="card-body">
               <div class="form-grid">
@@ -75,28 +143,192 @@
                   <label for="lastName">Last Name</label>
                   <input type="text" id="lastName" placeholder="Enter last name" />
                 </div>
+                <div class="form-group">
+                  <label for="clientId">Client ID</label>
+                  <input type="text" id="clientId" placeholder="Enter client ID" />
+                </div>
+                <div class="form-group">
+                  <label for="county">County</label>
+              <select id="county" name="county">
+                <option value="">Select County</option>
+                <option>Allegheny</option>
+                <option>Butler</option>
+                <option>Chester</option>
+                <option>Cumberland/Perry</option>
+                <option>Dauphin</option>
+                <option>Delaware</option>
+                <option>Lancaster</option>
+                <option>Lebanon</option>
+                <option>Schuylkill</option>
+                <option>Washington</option>
+                <option>Westmoreland</option>
+                <option>York/Adams</option>
+              </select>
+                </div>
+                <div class="form-group">
+                  <label for="serviceCoordinatorFirstName">Service Coordinator First Name</label>
+                  <input type="text" id="serviceCoordinatorFirstName" placeholder="Enter service coordinator first name" />
+                </div>
+                <div class="form-group">
+                  <label for="serviceCoordinatorLastName">Service Coordinator Last Name</label>
+                  <input type="text" id="serviceCoordinatorLastName" placeholder="Enter service coordinator last name" />
+                </div>
+                <div class="form-group">
+                  <label for="ifspStartDate">IFSP Start Date</label>
+                  <input type="date" id="ifspStartDate" />
+                </div>
+                <div class="form-group">
+                  <label for="language">Language</label>
+                  <input type="text" id="language" placeholder="e.g. English, Spanish" />
+                </div>
+                <div class="form-group">
+                  <label>Client Address</label>
+                  <div class="addr-grid">
+                    <input type="text" id="addrStreet" placeholder="Street" />
+                    <input type="text" id="addrStreet2" placeholder="Apt / Suite / Unit" />
+                    <input type="text" id="addrCity" class="addr-city" placeholder="City" />
+                    <input type="text" id="addrState" class="addr-state" placeholder="ST" maxlength="2" />
+                    <input type="text" id="addrZip" class="addr-zip" placeholder="ZIP" maxlength="10" inputmode="numeric" />
+                  </div>
+                </div>
+                <div class="form-group form-group--full">
+                  <div class="family-members-header">
+                    <label>Family Members</label>
+                    <button type="button" id="addFamilyMemberBtn" class="btn btn-add family-member-add-btn">
+                      <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                      Add Member
+                    </button>
+                  </div>
+                  <div class="family-member-cols">
+                    <span>Name</span>
+                    <span>Role</span>
+                    <span>Phone</span>
+                    <span>Email</span>
+                    <span></span>
+                  </div>
+                  <div id="familyMembersList" class="family-members-list"></div>
+                </div>
               </div>
-              <div class="button-group">
-                <button id="saveBtn" class="btn btn-primary">
+
+            </div>
+          </div>
+
+          <!-- Right column stack: Goals/Outcomes -->
+          <div class="right-column-stack">
+
+          <!-- Goals/Outcomes Card -->
+          <div class="card goals-card">
+            <div class="card-header">
+              <h2>
+                <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:6px">
+                  <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 2V4M8 12V14M2 8H4M12 8H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Goals/Outcomes
+              </h2>
+            </div>
+            <div class="card-body">
+              <div id="goalsList" class="goals-list"></div>
+              <div class="reminder-input-row">
+                <input type="text" id="goalInput" class="reminder-input goals-input" placeholder="Add a goal or outcome…" />
+                <button id="addGoalBtn" class="btn btn-add">
                   <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M13 3L6 10L3 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   </svg>
-                  Save
+                  Add
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Session Notes Card -->
-          <div class="card notes-card">
+          </div><!-- end right-column-stack -->
+
+          <!-- Service Providers Card -->
+          <div class="card service-providers-card span-full">
             <div class="card-header">
-              <h2>Session Notes</h2>
-              <button id="addNoteBtn" class="btn btn-add" disabled>
+              <h2>
+                <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:6px">
+                  <circle cx="5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                  <circle cx="11" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M1 13C1 11 2.5 10 5 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M15 13C15 11 13.5 10 11 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M8 13C8 11 9 10 10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Service Providers
+              </h2>
+              <button type="button" id="addServiceProviderBtn" class="btn btn-add family-member-add-btn">
                 <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                Add Note
+                Add Provider
               </button>
+            </div>
+            <div class="card-body">
+              <div class="client-users-cols">
+                <span>Early Interventionist</span>
+                <span>Type of Service</span>
+                <span>Frequency</span>
+                <span>Duration</span>
+                <span>Auth Start</span>
+                <span>Auth End</span>
+                <span></span>
+                <span></span>
+              </div>
+              <div id="clientUsersList" class="client-users-list"></div>
+            </div>
+          </div>
+
+          <!-- Reminders Card -->
+          <div class="card postit-card span-full">
+            <div class="card-header">
+              <h2>
+                <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:6px">
+                  <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2"/>
+                  <path d="M5 6H11M5 9H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Reminders
+              </h2>
+            </div>
+            <div class="card-body">
+              <div id="remindersList" class="reminders-list"></div>
+              <div class="reminder-input-row">
+                <input type="text" id="reminderInput" class="reminder-input" placeholder="Add a reminder…" />
+                <button id="addReminderBtn" class="btn btn-add">
+                  <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interventionist Notes Card -->
+          <div class="card interventionist-card span-full">
+            <div class="card-header">
+              <h2>
+                <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:6px">
+                  <path d="M3 2h7l3 3v9a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M10 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M5 8H11M5 11H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Interventionist Notes
+              </h2>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <textarea id="interventionistNotes" class="notes-textarea" placeholder="Word lists, sensory profiles, HELP, daycare teachers, data collection…" rows="8"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Session Notes Card -->
+          <div class="card notes-card span-full">
+            <div class="card-header">
+              <h2>Session Notes</h2>
             </div>
             <div class="card-body">
               <div id="sessionNotesList" class="notes-list">
@@ -118,66 +350,13 @@
         <!-- User Accounts Page -->
         <div id="accountsPage" class="page-content" style="display:none">
           <div class="main-content">
-            <!-- Account Details Card -->
-            <div class="card details-card">
-              <div class="card-header">
-                <h2>Account Information</h2>
-                <div class="card-badge" id="accountStatusBadge">New Account</div>
-              </div>
-              <div class="card-body">
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label for="accountUsername">Username</label>
-                    <input type="text" id="accountUsername" placeholder="Enter username" />
-                  </div>
-                  <div class="form-group">
-                    <label for="accountRole">Role</label>
-                    <select id="accountRole" class="form-select">
-                      <option value="">Select role...</option>
-                      <option value="Admin">Admin</option>
-                      <option value="Therapist">Therapist</option>
-                      <option value="ServiceCoordinator">Service Coordinator</option>
-                      <option value="Supervisor">Supervisor</option>
-                      <option value="Staff">Staff</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="accountFirstName">First Name</label>
-                    <input type="text" id="accountFirstName" placeholder="Enter first name" />
-                  </div>
-                  <div class="form-group">
-                    <label for="accountLastName">Last Name</label>
-                    <input type="text" id="accountLastName" placeholder="Enter last name" />
-                  </div>
-                </div>
-                <div class="form-group account-status-group">
-                  <label for="accountStatus">Status</label>
-                  <select id="accountStatus" class="form-select">
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
-                <div class="button-group">
-                  <button id="saveAccountBtn" class="btn btn-primary" style="display:none">
-                    <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M13 3L6 10L3 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Save Account
-                  </button>
-                </div>
-              </div>
-            </div>
-
             <!-- Accounts List Card -->
             <div class="card notes-card">
               <div class="card-header">
                 <h2>All Accounts</h2>
-                <button id="newAccountBtn" class="btn btn-add">
-                  <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                  New Account
-                </button>
+              </div>
+              <div class="account-filter-row">
+                <input type="text" id="accountFilterInput" class="account-filter-input" placeholder="Filter by name, username, or role…" />
               </div>
               <div class="card-body">
                 <div id="accountsList" class="notes-list">
@@ -191,8 +370,167 @@
                 </div>
               </div>
             </div>
+
+            <!-- Account Details Card -->
+            <div class="card details-card" style="display:none">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <button id="backToAccountsListBtn" class="btn-back-card">
+                    <svg class="icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    All Accounts
+                  </button>
+                  <h2>Account Information</h2>
+                </div>
+                <div class="card-header-right">
+                  <button id="deleteAccountBtn" class="btn-delete" style="display:none">
+                    <svg class="icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 4h10M6 4V2h4v2M5 4v9a1 1 0 001 1h4a1 1 0 001-1V4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Delete User
+                  </button>
+                  <div class="card-badge" id="accountStatusBadge">New Account</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="accountFirstName">First Name</label>
+                    <input type="text" id="accountFirstName" placeholder="Enter first name" />
+                  </div>
+                  <div class="form-group">
+                    <label for="accountLastName">Last Name</label>
+                    <input type="text" id="accountLastName" placeholder="Enter last name" />
+                  </div>
+                  <div class="form-group">
+                    <label for="accountUsername">Username</label>
+                    <input type="text" id="accountUsername" placeholder="Enter username" />
+                  </div>
+                  <div class="form-group">
+                    <label>Role</label>
+                    <div class="role-multiselect" id="accountRoleSelect">
+                      <div class="role-multiselect-control" id="accountRoleControl">
+                        <div class="role-pills-display" id="accountRolePills">
+                          <span class="role-placeholder">Select roles…</span>
+                        </div>
+                        <svg class="role-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M4 6L8 10L12 6" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                      <div class="role-multiselect-dropdown" id="accountRoleDropdown">
+                        <label class="role-option"><input type="checkbox" value="Admin"> Admin</label>
+                        <label class="role-option"><input type="checkbox" value="CF"> CF</label>
+                        <label class="role-option"><input type="checkbox" value="CF Supervisor"> CF Supervisor</label>
+                        <label class="role-option"><input type="checkbox" value="COTA"> COTA</label>
+                        <label class="role-option"><input type="checkbox" value="COTA Supervisor"> COTA Supervisor</label>
+                        <label class="role-option"><input type="checkbox" value="Interventionist"> Interventionist</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group" id="cotaSupervisorGroup" style="display:none">
+                    <label for="cotaSupervisorSelect">COTA Supervisor</label>
+                    <select id="cotaSupervisorSelect" class="form-select">
+                      <option value="">Select COTA Supervisor…</option>
+                    </select>
+                  </div>
+                  <div class="form-group" id="cfSupervisorGroup" style="display:none">
+                    <label for="cfSupervisorSelect">CF Supervisor</label>
+                    <select id="cfSupervisorSelect" class="form-select">
+                      <option value="">Select CF Supervisor…</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="accountStaffId">Staff ID</label>
+                    <input type="text" id="accountStaffId" placeholder="Enter staff ID" />
+                  </div>
+                  <div class="form-group">
+                    <label for="accountPayrollId">Employee Payroll ID</label>
+                    <input type="text" id="accountPayrollId" placeholder="Enter employee payroll ID" />
+                  </div>
+                  <div class="form-group">
+                    <label for="accountPhone">Phone Number</label>
+                    <input type="tel" id="accountPhone" placeholder="Enter phone number" />
+                  </div>
+                  <div class="form-group">
+                    <label for="accountCredentials">Credentials / Title</label>
+                    <input type="text" id="accountCredentials" placeholder="Enter credentials or title" />
+                  </div>
+                </div>
+                <div class="form-group account-status-group">
+                  <label for="accountStatus">Status</label>
+                  <select id="accountStatus" class="form-select">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+                <div class="button-group">
+                </div>
+              </div>
+            </div>
           </div>
         </div><!-- end accountsPage -->
+      </div>
+    </div>
+
+    <!-- Floating Save Bar -->
+    <div id="savebar" class="save-bar" style="display:none">
+      <button id="cancelBtn" class="btn btn-secondary save-bar-btn">
+        Cancel
+      </button>
+      <button id="saveBtn" class="btn btn-primary save-bar-btn">
+        <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M13 3L6 10L3 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Save
+      </button>
+    </div>
+
+    <!-- Export Date Range Modal -->
+    <div id="exportModal" class="modal">
+      <div class="modal-content export-modal-content">
+        <div class="modal-header">
+          <h3>Export Session Notes</h3>
+          <button class="modal-close export-modal-close">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="export-form">
+            <div class="export-type-group">
+              <label class="export-type-label">
+                <input type="radio" name="exportType" value="sessionNotes" checked />
+                Session Note Export
+              </label>
+              <label class="export-type-label">
+                <input type="radio" name="exportType" value="payroll" />
+                Payroll Export
+              </label>
+            </div>
+            <div class="export-date-group">
+              <div class="form-group">
+                <label for="exportStartDate">Start Date</label>
+                <input type="date" id="exportStartDate" />
+              </div>
+              <div class="form-group">
+                <label for="exportEndDate">End Date</label>
+                <input type="date" id="exportEndDate" />
+              </div>
+            </div>
+            <div class="export-actions">
+              <button id="exportCancelBtn" class="btn btn-secondary">Cancel</button>
+              <button id="exportSubmitBtn" class="btn btn-primary">
+                <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 2V10M8 10L5 7M8 10L11 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3 12H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Export
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -232,6 +570,26 @@
       </div>
     </div>
 
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal">
+      <div class="modal-content confirm-modal-content">
+        <div class="modal-body">
+          <div class="message-icon confirm-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+              <path d="M24 14V26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="24" cy="33" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <p id="confirmModalMessage"></p>
+          <div class="confirm-modal-actions">
+            <button id="confirmModalCancelBtn" class="btn btn-secondary">Cancel</button>
+            <button id="confirmModalOkBtn" class="btn btn-delete">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Message Modal -->
     <div id="modal" class="modal">
       <div class="modal-content message-modal-content">
@@ -252,5 +610,11 @@
     <script type="module">
       import "./src/index.js";
     </script>
+  <!-- Hidden focus sink: keeps a focusable input active at all times so FileMaker's
+       WKWebView passes spacebar and arrow keys from an external iPad keyboard through
+       to this page rather than intercepting them for native FM navigation. -->
+  <input id="fmKeyboardFocusSink" type="text" aria-hidden="true"
+    style="position:fixed;opacity:0;width:1px;height:1px;overflow:hidden;pointer-events:none;z-index:-9999;top:0;left:0;"
+    tabindex="-1" autocomplete="off" />
   </body>
 </html>

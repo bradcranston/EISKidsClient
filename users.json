@@ -1,0 +1,104 @@
+{
+	"value" : 
+	[
+		{
+			"__ID" : "E599E540-69C5-4F45-B762-5017D13455AC",
+			"firstName" : "Jamie",
+			"lastName" : "Beck",
+			"payrollId" : "245",
+			"phone" : "",
+			"rid" : "8",
+			"role" : [ "CF Supervisor", "Interventionist" ],
+			"staffId" : "Y71",
+			"username" : "jbeck@eiskids.com"
+		},
+		{
+			"__ID" : "7841BB2F-4FC1-40F2-8EA0-505D2B43E217",
+			"firstName" : "Sarah",
+			"lastName" : "Chedrick",
+			"payrollId" : "265",
+			"phone" : "",
+			"rid" : "9",
+			"role" : [ "COTA", "Interventionist" ],
+			"staffId" : "D5261",
+			"username" : "schedrick@eiskids.com"
+		},
+		{
+			"__ID" : "8E0CE787-E17C-4124-A0CE-6325F48F6FB8",
+			"firstName" : "Ashleigh",
+			"lastName" : "Creighton",
+			"payrollId" : "000167",
+			"phone" : "",
+			"rid" : "10",
+			"role" : [ "CF", "Interventionist" ],
+			"staffId" : "D3626",
+			"username" : "acreighton@eiskids.com"
+		},
+		{
+			"__ID" : "1C97F621-22D8-45ED-867C-FC777C38042D",
+			"firstName" : "Julie",
+			"lastName" : "Daly",
+			"payrollId" : "339",
+			"phone" : "",
+			"rid" : "11",
+			"role" : [ "COTA Supervisor", "Interventionist" ],
+			"staffId" : "E2",
+			"username" : "jdaly@eiskids.com"
+		},
+		{
+			"__ID" : "566BDEA2-2EFF-4E3B-A9D8-2E2821F0848B",
+			"firstName" : "Jake",
+			"lastName" : "Galbraith",
+			"payrollId" : "000093",
+			"phone" : "",
+			"rid" : "12",
+			"role" : [ "CF Supervisor", "Interventionist" ],
+			"staffId" : "ADMIN4",
+			"username" : "sessionnotes@eiskids.com"
+		},
+		{
+			"__ID" : "33F4CB9D-597C-4DD5-8589-D3106AB6CF57",
+			"firstName" : "Kelley",
+			"lastName" : "Lamanno",
+			"payrollId" : "000135",
+			"phone" : "",
+			"rid" : "13",
+			"role" : [ "CF Supervisor", "Interventionist" ],
+			"staffId" : "ADMIN19",
+			"username" : "klamanno@eiskids.com"
+		},
+		{
+			"__ID" : "EFECA610-B97D-4B43-8BFF-163CEA28DE49",
+			"firstName" : "Anne",
+			"lastName" : "Lang",
+			"payrollId" : "000054",
+			"phone" : "",
+			"rid" : "14",
+			"role" : [ "COTA Supervisor", "Interventionist" ],
+			"staffId" : "ADMIN17",
+			"username" : "alang@eiskids.com"
+		},
+		{
+			"__ID" : "24760619-DF79-4942-B29A-A1324C65BD50",
+			"firstName" : "Brittany",
+			"lastName" : "Stough",
+			"payrollId" : "000144",
+			"phone" : "",
+			"rid" : "15",
+			"role" : [ "CF", "Interventionist" ],
+			"staffId" : "Y29",
+			"username" : "bstough@eiskids.com"
+		},
+		{
+			"__ID" : "80B30CB3-135C-444D-87F7-15DDDAFB20BA",
+			"firstName" : "Stephanie",
+			"lastName" : "Wilson",
+			"payrollId" : "230",
+			"phone" : "",
+			"rid" : "16",
+			"role" : [ "COTA", "Interventionist" ],
+			"staffId" : "D4802",
+			"username" : "swilson@eiskids.com"
+		}
+	]
+}

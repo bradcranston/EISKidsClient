@@ -251,6 +251,14 @@ function initInterface() {
 
   exportSubmitBtn.addEventListener('click', handleExport);
 
+  // Sync button - triggers a FileMaker mirror sync when running offline
+  const syncBtn = document.getElementById('syncBtn');
+  syncBtn.addEventListener('click', () => {
+    if (window.FileMaker) {
+      window.FileMaker.PerformScript('MirrorSync 6 (Session Notes)');
+    }
+  });
+
   // Search modal event listeners
   openSearchBtn.addEventListener('click', () => {
     searchModal.style.display = 'flex';
@@ -285,11 +293,19 @@ function initInterface() {
   clearBtn.addEventListener('click', handleClear);
   document.getElementById('deleteClientBtn').addEventListener('click', handleDeleteClient);
   document.getElementById('clientUsersList').addEventListener('click', (e) => {
-    const btn = e.target.closest('.cu-add-note-btn');
-    if (!btn) return;
-    const idx = Number(btn.dataset.cuIndex);
-    if (currentClientUsers[idx] !== undefined) handleAddNote(currentClientUsers[idx]);
+    const noteBtn = e.target.closest('.cu-add-note-btn');
+    if (noteBtn) {
+      const idx = Number(noteBtn.dataset.cuIndex);
+      if (currentClientUsers[idx] !== undefined) handleAddNote(currentClientUsers[idx]);
+      return;
+    }
+    const deleteBtn = e.target.closest('.cu-delete-btn');
+    if (deleteBtn) {
+      const idx = Number(deleteBtn.dataset.cuIndex);
+      deleteClientUser(idx);
+    }
   });
+  document.getElementById('addServiceProviderBtn').addEventListener('click', addClientUser);
 
   // Track changes in form fields
   firstName.addEventListener('input', checkForChanges);
@@ -707,6 +723,11 @@ function handleClear() {
   document.getElementById('serviceCoordinatorLastName').value = '';
   document.getElementById('ifspStartDate').value = '';
   document.getElementById('language').value = '';
+  document.getElementById('addrStreet').value = '';
+  document.getElementById('addrStreet2').value = '';
+  document.getElementById('addrCity').value = '';
+  document.getElementById('addrState').value = '';
+  document.getElementById('addrZip').value = '';
   currentClientUsers = [];
   displayClientUsers();
 
@@ -1474,9 +1495,27 @@ function displayClientUsers() {
           </svg>
           Add Note
         </button>
+        <button class="reminder-delete-btn cu-delete-btn" data-cu-index="${i}" type="button" aria-label="Remove service provider">&#x2715;</button>
       </div>
     `;
   }).join('');
+}
+
+// Add an empty service provider row
+function addClientUser() {
+  currentClientUsers.push({ userId: '', user: '', methodAbbr: '', frequency: '', duration: '', dateStart: '', dateEnd: '' });
+  displayClientUsers();
+  const newIdx = currentClientUsers.length - 1;
+  const newSelect = document.querySelector(`#clientUsersList [data-cu-index="${newIdx}"][data-cu-field="userId"]`);
+  if (newSelect) newSelect.focus();
+  checkForChanges();
+}
+
+// Delete a service provider by index
+function deleteClientUser(index) {
+  currentClientUsers.splice(index, 1);
+  displayClientUsers();
+  checkForChanges();
 }
 
 // Duration input formatting (h:mm)
@@ -2151,7 +2190,7 @@ function loadDashboard(data) {
 }
 
 // Load client list - alternative dashboard for roles that show a client roster
-function loadClientList(data) {
+function loadClientList(data, offline) {
   let clients = data;
   if (typeof data === 'string') {
     try {
@@ -2165,6 +2204,11 @@ function loadClientList(data) {
   if (!Array.isArray(clients)) {
     console.error('loadClientList: expected an array of clients');
     return;
+  }
+
+  const syncBtn = document.getElementById('syncBtn');
+  if (syncBtn) {
+    syncBtn.style.display = Number(offline) === 1 ? '' : 'none';
   }
 
   const sorted = [...clients].sort((a, b) => {
